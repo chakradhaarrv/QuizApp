@@ -1,0 +1,117 @@
+import io.spring.gradle.dependencymanagement.DependencyManagementPlugin
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
+plugins {
+    //id 'org.springframework.boot' version '2.1.0-M3'
+    id 'org.springframework.boot' version '2.1.4.RELEASE'
+    id 'io.spring.dependency-management'
+    id 'java'
+    id 'com.github.spotbugs'
+    id 'checkstyle'
+    id 'jacoco'
+}
+
+group = 'com.crio'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    //maven { url 'https://plugings.gradle.org/m2/' }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    compile("org.springframework.boot:spring-boot-starter-log4j2:$rootProject.ext.springBootVersion") {
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-slf4j-impl'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-jul'
+        exclude group: 'org.slf4j', module: 'jul-to-slf4j'
+    }
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.12.1'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.1'
+    //compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.12.1'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-jul', version: '2.12.1'
+    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.28'
+
+    compile("com.fasterxml.jackson.core:jackson-core:$rootProject.ext.jacksonVersion")
+    compile("com.fasterxml.jackson.core:jackson-annotations:$rootProject.ext.jacksonVersion")
+    compile("com.fasterxml.jackson.core:jackson-databind:$rootProject.ext.jacksonVersion")
+
+    implementation group: "javax.inject", name: "javax.inject", version: "1"
+    implementation "org.springframework.boot:spring-boot-starter-actuator:$rootProject.ext.springBootVersion"
+    implementation group: "com.google.guava", name: "guava", version: "20.0"
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "org.modelmapper:modelmapper:$rootProject.ext.modelMapperVersion"
+
+    compileOnly 'org.projectlombok:lombok:1.18.4'
+    annotationProcessor 'org.projectlombok:lombok:1.18.4'
+	    testCompileOnly 'org.projectlombok:lombok:1.18.4'
+	    testAnnotationProcessor 'org.projectlombok:lombok:1.18.4'
+    
+    runtimeOnly "org.springframework.boot:spring-boot-devtools"
+    annotationProcessor "org.projectlombok:lombok"
+    //compile "org.springframework.boot:spring-boot-starter-webflux:$rootProject.ext.springBootVersion"
+    compile group: 'org.springframework', name: 'spring-webflux', version: '5.2.8.RELEASE'
+    compile 'io.projectreactor.netty:reactor-netty'
+    //compile group: 'org.springframework.boot', name: 'spring-boot-starter-webflux'
+
+    implementation "io.springfox:springfox-swagger2:$rootProject.ext.swaggerVersion"
+    implementation "io.springfox:springfox-swagger-ui:$rootProject.ext.swaggerVersion"
+
+    //implementation "org.mockito:mockito-junit-jupiter:$rootProject.ext.mockitoVersion"
+    //compileOnly 'org.projectlombok:lombok'
+    //runtimeOnly 'mysql:mysql-connector-java'
+    //annotationProcessor 'org.projectlombok:lombok'
+    
+
+    testImplementation("org.mockito:mockito-junit-jupiter:$rootProject.ext.mockitoVersion")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:$rootProject.ext.springBootVersion") {
+            exclude group: "junit", module: "junit"
+        }
+    //testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$rootProject.ext.junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$rootProject.ext.junitVersion"
+    testImplementation("org.junit.platform:junit-platform-launcher" +
+            ":$rootProject.ext.junitPlatformLauncherVersion")
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$rootProject.ext.junitVersion"
+    //testImplementation 'org.springframework.amqp:spring-rabbit-test'
+    //testImplementation "io.projectreactor:reactor-test:3.3.6.RELEASE"
+}
+
+spotbugsMain {
+    ignoreFailures = true
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+spotbugsTest {
+    ignoreFailures = true
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.4"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled false
+    }
+}
+
